@@ -10,9 +10,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
-/* ═══════════════════════════════════════════
-   ROOT VARIABLES & RESET
-═══════════════════════════════════════════ */
 :root {
   --bg:         #02050f;
   --bg2:        #030812;
@@ -20,10 +17,10 @@
   --surface2:   rgba(255,255,255,0.06);
   --border:     rgba(255,255,255,0.07);
   --border2:    rgba(99,179,237,0.2);
-  --c1:         #63b3ed;   /* sky blue */
-  --c2:         #76e4f7;   /* cyan */
-  --c3:         #68d391;   /* green */
-  --c4:         #b794f4;   /* violet */
+  --c1:         #63b3ed;
+  --c2:         #76e4f7;
+  --c3:         #68d391;
+  --c4:         #b794f4;
   --text:       #e2e8f0;
   --muted:      #718096;
   --muted2:     #4a5568;
@@ -31,10 +28,8 @@
   --ff-body:    'Cabinet Grotesk', sans-serif;
   --transition: cubic-bezier(0.16, 1, 0.3, 1);
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; font-size: 16px; }
-
 body {
   background: var(--bg);
   color: var(--text);
@@ -43,28 +38,13 @@ body {
   cursor: none;
   -webkit-font-smoothing: antialiased;
 }
-
 ::selection { background: rgba(99,179,237,0.25); color: var(--c1); }
-
-/* ═══════════════════════════════════════════
-   SCROLLBAR
-═══════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--c1); border-radius: 2px; }
-
-/* ═══════════════════════════════════════════
-   WEBGL CANVAS
-═══════════════════════════════════════════ */
-#webgl {
-  position: fixed; inset: 0;
-  z-index: 0; pointer-events: none;
-  opacity: 0.6;
-}
-
-/* ═══════════════════════════════════════════
-   CURSOR
-═══════════════════════════════════════════ */
+ 
+#webgl { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.6; }
+ 
 #cur-dot {
   position: fixed; width: 8px; height: 8px;
   background: var(--c1); border-radius: 50%;
@@ -90,10 +70,7 @@ body {
 }
 body.hovering #cur-dot { width: 16px; height: 16px; background: var(--c2); }
 body.hovering #cur-ring { width: 64px; height: 64px; border-color: rgba(118,228,247,0.4); }
-
-/* ═══════════════════════════════════════════
-   NOISE GRAIN OVERLAY
-═══════════════════════════════════════════ */
+ 
 body::after {
   content: ''; position: fixed; inset: -200%;
   width: 400%; height: 400%;
@@ -106,14 +83,10 @@ body::after {
   40%{transform:translate(3%,-5%)} 60%{transform:translate(-5%,2%)}
   80%{transform:translate(4%,3%)} 100%{transform:translate(-1%,4%)}
 }
-
-/* ═══════════════════════════════════════════
-   NAVIGATION
-═══════════════════════════════════════════ */
+ 
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  padding: 0 60px;
-  height: 72px;
+  padding: 0 60px; height: 72px;
   display: flex; align-items: center; justify-content: space-between;
   background: rgba(2,5,15,0.7);
   backdrop-filter: blur(24px) saturate(160%);
@@ -122,17 +95,13 @@ nav {
   transition: transform 0.6s var(--transition);
 }
 nav.visible { transform: translateY(0); }
-.nav-logo {
-  font-family: var(--ff-display); font-size: 1.2rem; font-weight: 700;
-  letter-spacing: 0.08em; color: var(--c1);
-}
+.nav-logo { font-family: var(--ff-display); font-size: 1.2rem; font-weight: 700; letter-spacing: 0.08em; color: var(--c1); }
 .nav-logo span { color: var(--muted); }
 .nav-menu { display: flex; gap: 48px; list-style: none; }
 .nav-menu a {
   font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--muted); text-decoration: none; font-weight: 500;
-  position: relative; padding-bottom: 2px;
-  transition: color 0.3s;
+  position: relative; padding-bottom: 2px; transition: color 0.3s;
 }
 .nav-menu a::after {
   content: ''; position: absolute; bottom: 0; left: 0;
@@ -144,50 +113,31 @@ nav.visible { transform: translateY(0); }
 .nav-cta {
   font-size: 0.78rem; letter-spacing: 0.1em; font-weight: 600;
   padding: 9px 22px; border-radius: 100px;
-  border: 1px solid var(--border2); color: var(--c1);
-  text-decoration: none;
+  border: 1px solid var(--border2); color: var(--c1); text-decoration: none;
   transition: background 0.3s, box-shadow 0.3s;
 }
 .nav-cta:hover { background: rgba(99,179,237,0.07); box-shadow: 0 0 20px rgba(99,179,237,0.15); }
-
-/* ═══════════════════════════════════════════
-   PAGE WRAPPER
-═══════════════════════════════════════════ */
+ 
 .page { position: relative; z-index: 1; }
-
-/* ═══════════════════════════════════════════
-   SECTION BASE
-═══════════════════════════════════════════ */
-.section {
-  padding: 140px 80px;
-  max-width: 1280px; margin: 0 auto;
-  position: relative;
-}
+ 
+.section { padding: 140px 80px; max-width: 1280px; margin: 0 auto; position: relative; }
 .section-eyebrow {
   display: inline-flex; align-items: center; gap: 12px;
   font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase;
   color: var(--c1); font-weight: 600; margin-bottom: 20px;
 }
-.section-eyebrow::before {
-  content: ''; display: block;
-  width: 28px; height: 1px; background: var(--c1);
-}
+.section-eyebrow::before { content: ''; display: block; width: 28px; height: 1px; background: var(--c1); }
 .section-title {
   font-family: var(--ff-display);
   font-size: clamp(2.6rem, 5vw, 4rem);
-  font-weight: 700; line-height: 1.05;
-  margin-bottom: 60px;
+  font-weight: 700; line-height: 1.05; margin-bottom: 60px;
 }
 .section-title em {
   font-style: normal;
   background: linear-gradient(135deg, var(--c1), var(--c2));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-
-/* ═══════════════════════════════════════════
-   GLASS CARD BASE
-═══════════════════════════════════════════ */
+ 
 .glass {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -200,24 +150,16 @@ nav.visible { transform: translateY(0); }
 .glass::before {
   content: ''; position: absolute; inset: 0;
   background: radial-gradient(600px circle at var(--mx,50%) var(--my,50%), rgba(99,179,237,0.045), transparent 50%);
-  opacity: 0; transition: opacity 0.4s; border-radius: inherit;
-  pointer-events: none;
+  opacity: 0; transition: opacity 0.4s; border-radius: inherit; pointer-events: none;
 }
 .glass:hover { border-color: rgba(99,179,237,0.18); }
 .glass:hover::before { opacity: 1; }
-
-/* ═══════════════════════════════════════════
-   HERO
-═══════════════════════════════════════════ */
+ 
+/* ── HERO ── */
 #hero {
-  min-height: 100vh;
-  display: flex; align-items: center;
-  padding: 140px 80px 80px;
-  position: relative;
-  overflow: hidden;
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 140px 80px 80px; position: relative; overflow: hidden;
 }
-
-/* Decorative grid lines */
 .hero-grid {
   position: absolute; inset: 0; pointer-events: none;
   background-image:
@@ -226,30 +168,19 @@ nav.visible { transform: translateY(0); }
   background-size: 80px 80px;
   mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
 }
-
-.hero-content {
-  display: grid; grid-template-columns: 1fr 420px;
-  gap: 80px; align-items: center;
-  max-width: 1280px; width: 100%; margin: 0 auto;
-}
-
+.hero-content { display: grid; grid-template-columns: 1fr 420px; gap: 80px; align-items: center; max-width: 1280px; width: 100%; margin: 0 auto; }
 .hero-tag {
   display: inline-flex; align-items: center; gap: 10px;
   padding: 8px 18px; border-radius: 100px;
   background: rgba(99,179,237,0.06); border: 1px solid var(--border2);
   font-size: 0.75rem; letter-spacing: 0.12em; color: var(--c1);
-  text-transform: uppercase; font-weight: 600; margin-bottom: 32px;
-  opacity: 0;
+  text-transform: uppercase; font-weight: 600; margin-bottom: 32px; opacity: 0;
 }
-.hero-tag .dot {
-  width: 6px; height: 6px; border-radius: 50%; background: var(--c3);
-  animation: livePulse 1.8s ease infinite;
-}
+.hero-tag .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c3); animation: livePulse 1.8s ease infinite; }
 @keyframes livePulse {
   0%,100% { opacity:1; transform:scale(1); }
   50% { opacity:0.5; transform:scale(1.4); box-shadow:0 0 6px var(--c3); }
 }
-
 .hero-h1 {
   font-family: var(--ff-display); font-weight: 700;
   font-size: clamp(3.5rem, 7vw, 6.5rem); line-height: 0.95;
@@ -259,15 +190,9 @@ nav.visible { transform: translateY(0); }
 .hero-h1 .word { display: inline-block; transform: translateY(110%); }
 .hero-h1 .grad {
   background: linear-gradient(135deg, var(--c1) 0%, var(--c2) 50%, var(--c4) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-
-.hero-desc {
-  font-size: 1.05rem; line-height: 1.75; color: var(--muted); max-width: 520px;
-  margin-bottom: 48px; font-weight: 400; opacity: 0;
-}
-
+.hero-desc { font-size: 1.05rem; line-height: 1.75; color: var(--muted); max-width: 520px; margin-bottom: 48px; font-weight: 400; opacity: 0; }
 .hero-actions { display: flex; gap: 16px; opacity: 0; }
 .btn-hero {
   display: inline-flex; align-items: center; gap: 10px;
@@ -275,68 +200,34 @@ nav.visible { transform: translateY(0); }
   font-size: 0.88rem; font-weight: 600; letter-spacing: 0.06em;
   text-decoration: none; transition: all 0.3s var(--transition);
 }
-.btn-hero-primary {
-  background: linear-gradient(135deg, var(--c1), var(--c2));
-  color: #02050f;
-  box-shadow: 0 0 40px rgba(99,179,237,0.25);
-}
+.btn-hero-primary { background: linear-gradient(135deg, var(--c1), var(--c2)); color: #02050f; box-shadow: 0 0 40px rgba(99,179,237,0.25); }
 .btn-hero-primary:hover { transform: translateY(-3px); box-shadow: 0 0 60px rgba(99,179,237,0.4); }
-.btn-hero-ghost {
-  border: 1px solid var(--border); color: var(--text);
-  background: transparent;
-}
+.btn-hero-ghost { border: 1px solid var(--border); color: var(--text); background: transparent; }
 .btn-hero-ghost:hover { border-color: var(--c1); color: var(--c1); background: rgba(99,179,237,0.04); transform: translateY(-3px); }
-
-/* HERO CARD */
+ 
 .hero-card { padding: 36px; opacity: 0; }
-.hc-status {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
-  color: var(--c3); font-weight: 600; margin-bottom: 28px;
-}
-.hc-status-dot {
-  width: 7px; height: 7px; border-radius: 50%; background: var(--c3);
-  animation: livePulse 2s ease infinite;
-}
-.hc-name {
-  font-family: var(--ff-display); font-size: 1.7rem; font-weight: 700;
-  margin-bottom: 4px;
-}
+.hc-status { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--c3); font-weight: 600; margin-bottom: 28px; }
+.hc-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--c3); animation: livePulse 2s ease infinite; }
+.hc-name { font-family: var(--ff-display); font-size: 1.7rem; font-weight: 700; margin-bottom: 4px; }
 .hc-role { color: var(--muted); font-size: 0.9rem; margin-bottom: 6px; }
 .hc-loc { color: var(--muted2); font-size: 0.82rem; margin-bottom: 28px; }
-
-.hc-stats {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 12px; margin-bottom: 28px;
-}
+.hc-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
 .hcs {
-  background: rgba(99,179,237,0.04);
-  border: 1px solid rgba(99,179,237,0.1);
+  background: rgba(99,179,237,0.04); border: 1px solid rgba(99,179,237,0.1);
   border-radius: 14px; padding: 16px 14px; text-align: center;
-  transition: border-color 0.3s, background 0.3s;
+  transition: border-color 0.3s, background 0.3s, transform 0.3s;
+  cursor: pointer; text-decoration: none; display: block;
 }
-.hcs:hover { border-color: var(--border2); background: rgba(99,179,237,0.08); }
-.hcs-num {
-  font-family: var(--ff-display); font-size: 1.9rem; font-weight: 700;
-  color: var(--c1); line-height: 1;
-}
+.hcs:hover { border-color: var(--border2); background: rgba(99,179,237,0.08); transform: translateY(-2px); }
+.hcs-num { font-family: var(--ff-display); font-size: 1.9rem; font-weight: 700; color: var(--c1); line-height: 1; }
 .hcs-label { font-size: 0.7rem; color: var(--muted); margin-top: 5px; letter-spacing: 0.05em; }
-
 .hc-skills { display: flex; flex-wrap: wrap; gap: 7px; }
-.hcs-pill {
-  padding: 5px 13px; border-radius: 100px;
-  font-size: 0.72rem; font-weight: 500;
-  background: rgba(118,228,247,0.06); border: 1px solid rgba(118,228,247,0.15);
-  color: var(--c2);
-}
-
-/* HERO SCROLL INDICATOR */
+.hcs-pill { padding: 5px 13px; border-radius: 100px; font-size: 0.72rem; font-weight: 500; background: rgba(118,228,247,0.06); border: 1px solid rgba(118,228,247,0.15); color: var(--c2); }
+ 
 .hero-scroll {
-  position: absolute; bottom: 48px; left: 50%;
-  transform: translateX(-50%);
+  position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%);
   display: flex; flex-direction: column; align-items: center; gap: 10px;
-  font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
-  color: var(--muted2);
+  font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted2);
 }
 .hero-scroll-line {
   width: 1px; height: 60px;
@@ -349,38 +240,17 @@ nav.visible { transform: translateY(0); }
   51% { transform: scaleY(1); transform-origin: bottom; }
   100% { transform: scaleY(0); transform-origin: bottom; }
 }
-
-/* ═══════════════════════════════════════════
-   ABOUT
-═══════════════════════════════════════════ */
-#about .about-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
-}
-.about-text p {
-  color: var(--muted); line-height: 1.9; font-size: 1rem;
-  margin-bottom: 20px; font-weight: 400;
-}
+ 
+/* ── ABOUT ── */
+#about .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.about-text p { color: var(--muted); line-height: 1.9; font-size: 1rem; margin-bottom: 20px; font-weight: 400; }
 .about-text p strong { color: var(--text); font-weight: 600; }
-.about-highlights {
-  display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px;
-}
-.highlight-chip {
-  padding: 8px 18px; border-radius: 100px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  font-size: 0.8rem; color: var(--text); font-weight: 500;
-  transition: border-color 0.3s, color 0.3s;
-}
+.about-highlights { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+.highlight-chip { padding: 8px 18px; border-radius: 100px; border: 1px solid var(--border); background: var(--surface); font-size: 0.8rem; color: var(--text); font-weight: 500; transition: border-color 0.3s, color 0.3s; }
 .highlight-chip:hover { border-color: var(--c1); color: var(--c1); }
-
 .about-visual { position: relative; }
-.about-card-main {
-  padding: 40px; margin-bottom: 16px;
-}
-.about-card-main h3 {
-  font-family: var(--ff-display); font-size: 1.3rem; font-weight: 700;
-  margin-bottom: 20px; color: var(--c1);
-}
+.about-card-main { padding: 40px; margin-bottom: 16px; }
+.about-card-main h3 { font-family: var(--ff-display); font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; color: var(--c1); }
 .edu-item { margin-bottom: 20px; }
 .edu-item:last-child { margin-bottom: 0; }
 .edu-deg { font-weight: 600; font-size: 0.95rem; margin-bottom: 3px; }
@@ -391,211 +261,166 @@ nav.visible { transform: translateY(0); }
 .mini-icon { font-size: 1.6rem; margin-bottom: 8px; display: block; }
 .mini-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.05em; }
 .mini-val { font-family: var(--ff-display); font-size: 1.2rem; font-weight: 700; color: var(--text); }
-
-/* ═══════════════════════════════════════════
-   SKILLS
-═══════════════════════════════════════════ */
-#skills { background: none; }
-.skills-bento {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: auto;
-  gap: 16px;
-}
+ 
+/* ── SKILLS ── */
+.skills-bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
 .sk { padding: 32px; }
-.sk-c1 { grid-column: span 5; }
-.sk-c2 { grid-column: span 4; }
-.sk-c3 { grid-column: span 3; }
-.sk-c4 { grid-column: span 6; }
-.sk-c5 { grid-column: span 6; }
-.sk-c6 { grid-column: span 4; }
-.sk-c7 { grid-column: span 4; }
-.sk-c8 { grid-column: span 4; }
+.sk-c1 { grid-column: span 5; } .sk-c2 { grid-column: span 4; } .sk-c3 { grid-column: span 3; }
+.sk-c4 { grid-column: span 6; } .sk-c5 { grid-column: span 6; }
+.sk-c6 { grid-column: span 4; } .sk-c7 { grid-column: span 4; } .sk-c8 { grid-column: span 4; }
 .sk-icon { font-size: 2rem; margin-bottom: 16px; display: block; }
-.sk h3 {
-  font-family: var(--ff-display); font-size: 1rem; font-weight: 600;
-  margin-bottom: 14px; color: var(--text);
-}
+.sk h3 { font-family: var(--ff-display); font-size: 1rem; font-weight: 600; margin-bottom: 14px; color: var(--text); }
 .sk-tags { display: flex; flex-wrap: wrap; gap: 7px; }
-.sk-tag {
-  padding: 4px 11px; border-radius: 100px;
-  background: var(--surface2); border: 1px solid var(--border);
-  font-size: 0.72rem; color: var(--muted); font-weight: 500;
-  transition: all 0.3s;
-}
+.sk-tag { padding: 4px 11px; border-radius: 100px; background: var(--surface2); border: 1px solid var(--border); font-size: 0.72rem; color: var(--muted); font-weight: 500; transition: all 0.3s; }
 .sk-tag:hover { background: rgba(99,179,237,0.08); border-color: var(--border2); color: var(--c1); }
-
-/* ═══════════════════════════════════════════
-   EXPERIENCE
-═══════════════════════════════════════════ */
+ 
+/* ── EXPERIENCE ── */
 .exp-list { display: flex; flex-direction: column; gap: 24px; }
 .exp-card { padding: 40px 44px; position: relative; overflow: hidden; }
-.exp-card::after {
-  content: ''; position: absolute;
-  left: 0; top: 0; bottom: 0; width: 2px;
-  background: linear-gradient(to bottom, var(--c1), var(--c4));
-}
-.exp-top {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  margin-bottom: 8px; flex-wrap: wrap; gap: 12px;
-}
-.exp-co {
-  font-family: var(--ff-display); font-size: 1.4rem; font-weight: 700;
-}
-.exp-badge {
-  font-size: 0.72rem; letter-spacing: 0.1em; font-weight: 600;
-  padding: 6px 16px; border-radius: 100px;
-  background: rgba(99,179,237,0.06); border: 1px solid var(--border2);
-  color: var(--c1); white-space: nowrap;
-}
+.exp-card::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--c1), var(--c4)); }
+.exp-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 12px; }
+.exp-co { font-family: var(--ff-display); font-size: 1.4rem; font-weight: 700; }
+.exp-badge { font-size: 0.72rem; letter-spacing: 0.1em; font-weight: 600; padding: 6px 16px; border-radius: 100px; background: rgba(99,179,237,0.06); border: 1px solid var(--border2); color: var(--c1); white-space: nowrap; }
 .exp-title { color: var(--c2); font-size: 0.9rem; margin-bottom: 4px; font-style: italic; }
 .exp-loc { color: var(--muted2); font-size: 0.8rem; margin-bottom: 24px; }
 .exp-list-items { list-style: none; }
-.exp-list-items li {
-  padding: 5px 0 5px 24px; position: relative;
-  color: var(--muted); font-size: 0.9rem; line-height: 1.75;
-}
-.exp-list-items li::before {
-  content: '›'; position: absolute; left: 0;
-  color: var(--c1); font-size: 1.1rem; line-height: 1.55;
-}
+.exp-list-items li { padding: 5px 0 5px 24px; position: relative; color: var(--muted); font-size: 0.9rem; line-height: 1.75; }
+.exp-list-items li::before { content: '›'; position: absolute; left: 0; color: var(--c1); font-size: 1.1rem; line-height: 1.55; }
 .exp-list-items li strong { color: var(--text); font-weight: 600; }
-
-/* ═══════════════════════════════════════════
-   PROJECTS
-═══════════════════════════════════════════ */
-.projects-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+ 
+/* ── PROJECTS ── */
+.projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.proj-card {
+  padding: 36px; position: relative; overflow: hidden;
+  cursor: pointer; text-decoration: none; display: block; color: inherit;
+  transition: border-color 0.4s, background 0.4s, box-shadow 0.4s, transform 0.4s var(--transition);
 }
-.proj-card { padding: 36px; position: relative; overflow: hidden; }
-.proj-num {
-  font-family: var(--ff-display); font-size: 4rem; font-weight: 700;
-  color: rgba(99,179,237,0.06); line-height: 1; margin-bottom: 14px;
-  transition: color 0.4s;
-}
+.proj-num { font-family: var(--ff-display); font-size: 4rem; font-weight: 700; color: rgba(99,179,237,0.06); line-height: 1; margin-bottom: 14px; transition: color 0.4s; }
 .proj-card:hover .proj-num { color: rgba(99,179,237,0.12); }
-.proj-card h3 {
-  font-family: var(--ff-display); font-size: 1.2rem; font-weight: 700;
-  margin-bottom: 12px; line-height: 1.3;
-}
+.proj-card h3 { font-family: var(--ff-display); font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
 .proj-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.75; margin-bottom: 24px; }
 .proj-tech { display: flex; flex-wrap: wrap; gap: 8px; }
-.proj-pill {
-  padding: 4px 12px; border-radius: 100px;
-  background: rgba(99,179,237,0.05); border: 1px solid rgba(99,179,237,0.12);
-  font-size: 0.7rem; color: var(--c1); font-weight: 500;
-}
-.proj-arrow {
-  position: absolute; top: 32px; right: 32px;
-  width: 36px; height: 36px; border-radius: 50%;
-  border: 1px solid var(--border);
+.proj-pill { padding: 4px 12px; border-radius: 100px; background: rgba(99,179,237,0.05); border: 1px solid rgba(99,179,237,0.12); font-size: 0.7rem; color: var(--c1); font-weight: 500; }
+.proj-arrow { position: absolute; top: 32px; right: 32px; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 1rem; transition: all 0.3s var(--transition); }
+.proj-card:hover .proj-arrow { border-color: var(--c1); color: var(--c1); background: rgba(99,179,237,0.08); transform: translate(3px,-3px); }
+ 
+/* ── PROJECT MODAL OVERLAY ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(2,5,15,0.92);
+  backdrop-filter: blur(16px);
   display: flex; align-items: center; justify-content: center;
-  color: var(--muted); font-size: 1rem;
-  transition: all 0.3s var(--transition);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease;
+  padding: 24px;
 }
-.proj-card:hover .proj-arrow {
-  border-color: var(--c1); color: var(--c1);
-  background: rgba(99,179,237,0.08);
-  transform: translate(3px,-3px);
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: #0a0f1e;
+  border: 1px solid rgba(99,179,237,0.18);
+  border-radius: 24px;
+  max-width: 820px; width: 100%;
+  max-height: 88vh; overflow-y: auto;
+  padding: 48px 52px;
+  position: relative;
+  transform: translateY(30px) scale(0.97);
+  transition: transform 0.4s var(--transition);
+  scrollbar-width: thin; scrollbar-color: var(--c1) transparent;
 }
-
-/* ═══════════════════════════════════════════
-   CERTIFICATIONS
-═══════════════════════════════════════════ */
-.certs-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+.modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
+.modal-close {
+  position: absolute; top: 20px; right: 24px;
+  background: none; border: 1px solid var(--border);
+  color: var(--muted); font-size: 1.1rem; cursor: none;
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
 }
+.modal-close:hover { border-color: var(--c1); color: var(--c1); }
+.modal-tag { display: inline-block; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c1); font-weight: 600; margin-bottom: 16px; }
+.modal-title { font-family: var(--ff-display); font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
+.modal-subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 32px; }
+.modal-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 36px; }
+.modal-pill { padding: 5px 14px; border-radius: 100px; background: rgba(99,179,237,0.06); border: 1px solid rgba(99,179,237,0.15); font-size: 0.72rem; color: var(--c1); font-weight: 500; }
+ 
+/* arch diagram inside modal */
+.modal-arch {
+  background: rgba(99,179,237,0.03);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 24px;
+  margin-bottom: 32px;
+  overflow-x: auto;
+}
+.modal-arch svg { min-width: 500px; width: 100%; height: auto; display: block; }
+ 
+/* pipeline visual */
+.modal-pipeline { display: flex; align-items: center; gap: 0; margin-bottom: 32px; overflow-x: auto; padding-bottom: 4px; }
+.mp-node { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; min-width: 80px; padding: 10px 4px; }
+.mp-icon { width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.mp-icon.done { background: rgba(104,211,145,0.12); border: 1px solid rgba(104,211,145,0.3); color: #68d391; }
+.mp-icon.run  { background: rgba(99,179,237,0.12); border: 1px solid rgba(99,179,237,0.3); color: var(--c1); animation: livePulse 1.5s infinite; }
+.mp-lbl { font-size: 9px; color: var(--muted); letter-spacing: 0.5px; text-align: center; font-family: var(--ff-body); }
+.mp-chevron { color: var(--muted2); font-size: 12px; flex-shrink: 0; padding-bottom: 20px; }
+ 
+.modal-bullets { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+.modal-bullets li { padding: 12px 16px 12px 44px; position: relative; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-size: 0.88rem; line-height: 1.7; }
+.modal-bullets li::before { content: '▸'; position: absolute; left: 16px; color: var(--c1); font-size: 0.9rem; top: 13px; }
+.modal-bullets li strong { color: var(--text); font-weight: 600; }
+.modal-metrics { display: flex; gap: 16px; flex-wrap: wrap; }
+.modal-metric { flex: 1; min-width: 120px; background: rgba(99,179,237,0.04); border: 1px solid rgba(99,179,237,0.1); border-radius: 12px; padding: 18px 16px; text-align: center; }
+.modal-metric-val { font-family: var(--ff-display); font-size: 1.6rem; font-weight: 700; color: var(--c1); line-height: 1; }
+.modal-metric-label { font-size: 0.68rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.08em; text-transform: uppercase; }
+ 
+/* network diagram colors */
+.nd-node { fill: rgba(99,179,237,0.08); stroke: rgba(99,179,237,0.3); stroke-width: 0.8; }
+.nd-node-active { fill: rgba(104,211,145,0.08); stroke: rgba(104,211,145,0.4); stroke-width: 0.8; }
+.nd-node-warn { fill: rgba(248,81,73,0.08); stroke: rgba(248,81,73,0.35); stroke-width: 0.8; }
+.nd-text { fill: #e2e8f0; font-family: 'Cabinet Grotesk', sans-serif; font-size: 11px; }
+.nd-text-dim { fill: #4a5568; font-family: 'Cabinet Grotesk', sans-serif; font-size: 9px; }
+.nd-text-cyan { fill: #63b3ed; font-family: 'Cabinet Grotesk', sans-serif; font-size: 9px; }
+.nd-text-green { fill: #68d391; font-family: 'Cabinet Grotesk', sans-serif; font-size: 9px; }
+.nd-text-red { fill: #f85149; font-family: 'Cabinet Grotesk', sans-serif; font-size: 9px; }
+ 
+/* ── CERTIFICATIONS ── */
+.certs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .cert-card { padding: 32px; text-align: center; }
 .cert-icon-wrap {
   width: 64px; height: 64px; border-radius: 16px; margin: 0 auto 20px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.8rem;
+  display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
   background: rgba(99,179,237,0.06); border: 1px solid rgba(99,179,237,0.12);
 }
-.cert-card h3 {
-  font-family: var(--ff-display); font-size: 0.95rem; font-weight: 600;
-  margin-bottom: 8px; line-height: 1.4;
-}
+.cert-card h3 { font-family: var(--ff-display); font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
 .cert-issuer { color: var(--muted); font-size: 0.82rem; margin-bottom: 14px; }
-.cert-status {
-  display: inline-block; padding: 4px 14px; border-radius: 100px;
-  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
-}
-.cert-active { background: rgba(104,211,145,0.08); border: 1px solid rgba(104,211,145,0.2); color: var(--c3); }
+.cert-status { display: inline-block; padding: 4px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; }
+.cert-active   { background: rgba(104,211,145,0.08); border: 1px solid rgba(104,211,145,0.2); color: var(--c3); }
 .cert-progress { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); color: #f6ad55; }
-
-/* ═══════════════════════════════════════════
-   CONTACT
-═══════════════════════════════════════════ */
+ 
+/* ── CONTACT ── */
 #contact { text-align: center; }
-.contact-wrap {
-  max-width: 760px; margin: 0 auto;
-  padding: 72px 60px;
-}
-.contact-wrap h2 {
-  font-family: var(--ff-display); font-size: clamp(2.5rem, 5vw, 3.8rem);
-  font-weight: 700; margin-bottom: 20px; line-height: 1.1;
-}
+.contact-wrap { max-width: 760px; margin: 0 auto; padding: 72px 60px; }
+.contact-wrap h2 { font-family: var(--ff-display); font-size: clamp(2.5rem, 5vw, 3.8rem); font-weight: 700; margin-bottom: 20px; line-height: 1.1; }
 .contact-wrap p { color: var(--muted); font-size: 1rem; line-height: 1.75; margin-bottom: 48px; }
 .contact-cta-row { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 48px; }
-.contact-link {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 13px 26px; border-radius: 100px;
-  background: var(--surface); border: 1px solid var(--border);
-  color: var(--text); text-decoration: none;
-  font-size: 0.85rem; font-weight: 500;
-  transition: all 0.3s var(--transition);
-}
-.contact-link:hover {
-  border-color: var(--c1); color: var(--c1);
-  background: rgba(99,179,237,0.05);
-  transform: translateY(-3px); box-shadow: 0 10px 30px rgba(99,179,237,0.1);
-}
-.contact-divider {
-  width: 60px; height: 1px; background: var(--border);
-  margin: 0 auto 28px;
-}
-.contact-email-big {
-  font-family: var(--ff-display); font-size: 1.3rem; font-weight: 600;
-  color: var(--c1); text-decoration: none;
-  transition: color 0.3s;
-}
+.contact-link { display: inline-flex; align-items: center; gap: 10px; padding: 13px 26px; border-radius: 100px; background: var(--surface); border: 1px solid var(--border); color: var(--text); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: all 0.3s var(--transition); }
+.contact-link:hover { border-color: var(--c1); color: var(--c1); background: rgba(99,179,237,0.05); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(99,179,237,0.1); }
+.contact-divider { width: 60px; height: 1px; background: var(--border); margin: 0 auto 28px; }
+.contact-email-big { font-family: var(--ff-display); font-size: 1.3rem; font-weight: 600; color: var(--c1); text-decoration: none; transition: color 0.3s; }
 .contact-email-big:hover { color: var(--c2); }
-
-/* ═══════════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════════ */
+ 
 footer {
-  position: relative; z-index: 1;
-  padding: 40px 80px;
+  position: relative; z-index: 1; padding: 40px 80px;
   border-top: 1px solid var(--border);
   display: flex; justify-content: space-between; align-items: center;
 }
-.foot-left {
-  font-family: var(--ff-display); font-size: 1.1rem; font-weight: 700;
-  color: var(--c1);
-}
+.foot-left { font-family: var(--ff-display); font-size: 1.1rem; font-weight: 700; color: var(--c1); }
 .foot-left span { color: var(--muted); }
 .foot-right { color: var(--muted2); font-size: 0.78rem; }
-.foot-scroll-top {
-  width: 44px; height: 44px; border-radius: 50%;
-  border: 1px solid var(--border); background: transparent;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--muted); cursor: none; font-size: 1.1rem;
-  transition: all 0.3s; text-decoration: none;
-}
+.foot-scroll-top { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: transparent; display: flex; align-items: center; justify-content: center; color: var(--muted); cursor: none; font-size: 1.1rem; transition: all 0.3s; text-decoration: none; }
 .foot-scroll-top:hover { border-color: var(--c1); color: var(--c1); transform: translateY(-3px); }
-
-/* ═══════════════════════════════════════════
-   REVEAL ANIMATIONS
-═══════════════════════════════════════════ */
+ 
 .reveal { opacity: 0; transform: translateY(50px); }
-
-/* ═══════════════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════════════ */
+ 
 @media (max-width: 900px) {
   nav { padding: 0 24px; }
   .nav-menu { display: none; }
@@ -608,20 +433,18 @@ footer {
   .projects-grid { grid-template-columns: 1fr; }
   .certs-grid { grid-template-columns: 1fr; }
   footer { padding: 32px 24px; flex-direction: column; gap: 16px; text-align: center; }
+  .modal-box { padding: 32px 24px; }
 }
 </style>
 </head>
 <body>
-
-<!-- CURSOR -->
+ 
 <div id="cur-dot"></div>
 <div id="cur-ring"></div>
 <div id="cur-glow"></div>
-
-<!-- THREE.JS CANVAS -->
 <canvas id="webgl"></canvas>
-
-<!-- NAV -->
+ 
+<!-- ══ NAV ══ -->
 <nav id="navbar">
   <div class="nav-logo">AR<span>/</span></div>
   <ul class="nav-menu">
@@ -634,17 +457,345 @@ footer {
   </ul>
   <a href="mailto:aravind.r1952@gmail.com" class="nav-cta">Hire Me →</a>
 </nav>
-
+ 
+<!-- ══ PROJECT MODALS ══ -->
+ 
+<!-- Modal 1: Zero-Downtime Pipeline -->
+<div class="modal-overlay" id="modal-1" onclick="closeModal(event,'modal-1')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('modal-1').classList.remove('open')">✕</button>
+    <div class="modal-tag">Project 01 — Infrastructure & CI/CD</div>
+    <h2 class="modal-title">Zero-Downtime AWS<br/>Deployment Pipeline</h2>
+    <p class="modal-subtitle">Terraform · AWS · Jenkins · GitHub Actions · Docker · Kubernetes · CloudWatch</p>
+    <div class="modal-pills">
+      <span class="modal-pill">Terraform</span><span class="modal-pill">AWS EC2</span><span class="modal-pill">ALB</span>
+      <span class="modal-pill">Auto Scaling Groups</span><span class="modal-pill">Jenkins</span>
+      <span class="modal-pill">GitHub Actions</span><span class="modal-pill">Docker</span>
+      <span class="modal-pill">Kubernetes</span><span class="modal-pill">CloudWatch</span><span class="modal-pill">RDS</span>
+    </div>
+ 
+    <!-- Architecture SVG -->
+    <div class="modal-arch">
+      <svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <defs>
+          <marker id="ma1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="ma2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" stroke="#63b3ed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="ma3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" stroke="#68d391" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <!-- Internet -->
+        <rect x="265" y="12" width="150" height="34" rx="6" class="nd-node"/>
+        <text x="340" y="33" text-anchor="middle" class="nd-text">Internet / Users</text>
+        <!-- ALB -->
+        <rect x="240" y="74" width="200" height="34" rx="6" fill="rgba(99,179,237,0.08)" stroke="rgba(99,179,237,0.35)" stroke-width="0.8"/>
+        <text x="340" y="95" text-anchor="middle" fill="#63b3ed" font-family="Cabinet Grotesk,sans-serif" font-size="11">Application Load Balancer</text>
+        <line x1="340" y1="46" x2="340" y2="72" stroke="#4a5568" stroke-width="1" marker-end="url(#ma1)"/>
+        <!-- Blue ASG -->
+        <rect x="60" y="144" width="170" height="38" rx="6" fill="rgba(104,211,145,0.08)" stroke="rgba(104,211,145,0.35)" stroke-width="0.8"/>
+        <text x="145" y="160" text-anchor="middle" fill="#68d391" font-family="Cabinet Grotesk,sans-serif" font-size="11" font-weight="600">Blue ASG — Active</text>
+        <text x="145" y="175" text-anchor="middle" fill="#4a5568" font-family="Cabinet Grotesk,sans-serif" font-size="9">6 instances · 100% traffic</text>
+        <!-- Green ASG -->
+        <rect x="450" y="144" width="170" height="38" rx="6" fill="rgba(99,179,237,0.05)" stroke="rgba(99,179,237,0.2)" stroke-width="0.8"/>
+        <text x="535" y="160" text-anchor="middle" fill="#63b3ed" font-family="Cabinet Grotesk,sans-serif" font-size="11">Green ASG — Standby</text>
+        <text x="535" y="175" text-anchor="middle" fill="#4a5568" font-family="Cabinet Grotesk,sans-serif" font-size="9">6 instances · 0% traffic</text>
+        <!-- ALB → Blue/Green -->
+        <path d="M295 108 L145 142" stroke="#68d391" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ma3)"/>
+        <path d="M385 108 L535 142" stroke="#4a5568" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ma1)"/>
+        <!-- DB row -->
+        <rect x="60" y="218" width="160" height="30" rx="5" class="nd-node"/>
+        <text x="140" y="237" text-anchor="middle" class="nd-text">RDS PostgreSQL</text>
+        <rect x="260" y="218" width="160" height="30" rx="5" class="nd-node"/>
+        <text x="340" y="237" text-anchor="middle" class="nd-text">ElastiCache Redis</text>
+        <rect x="460" y="218" width="160" height="30" rx="5" class="nd-node"/>
+        <text x="540" y="237" text-anchor="middle" class="nd-text">CloudWatch</text>
+        <line x1="145" y1="182" x2="145" y2="216" stroke="#4a5568" stroke-width="1" marker-end="url(#ma1)"/>
+        <line x1="340" y1="108" x2="340" y2="216" stroke="#4a5568" stroke-width="1" marker-end="url(#ma1)"/>
+        <line x1="535" y1="182" x2="535" y2="216" stroke="#4a5568" stroke-width="1" marker-end="url(#ma1)"/>
+      </svg>
+    </div>
+ 
+    <!-- CI/CD Pipeline -->
+    <div style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted2);margin-bottom:12px;">CI/CD Pipeline Flow</div>
+    <div class="modal-pipeline">
+      <div class="mp-node"><div class="mp-icon done">✓</div><div class="mp-lbl">Source</div></div>
+      <div class="mp-chevron">›</div>
+      <div class="mp-node"><div class="mp-icon done">✓</div><div class="mp-lbl">Docker Build</div></div>
+      <div class="mp-chevron">›</div>
+      <div class="mp-node"><div class="mp-icon done">✓</div><div class="mp-lbl">Test Suite</div></div>
+      <div class="mp-chevron">›</div>
+      <div class="mp-node"><div class="mp-icon done">✓</div><div class="mp-lbl">Push ECR</div></div>
+      <div class="mp-chevron">›</div>
+      <div class="mp-node"><div class="mp-icon done">✓</div><div class="mp-lbl">Blue→Green</div></div>
+      <div class="mp-chevron">›</div>
+      <div class="mp-node"><div class="mp-icon done">✓</div><div class="mp-lbl">Smoke Test</div></div>
+      <div class="mp-chevron">›</div>
+      <div class="mp-node"><div class="mp-icon done">✓</div><div class="mp-lbl">Monitor</div></div>
+    </div>
+ 
+    <ul class="modal-bullets">
+      <li><strong>Terraform IaC</strong> — fully reproducible infrastructure from VPC, subnets, SGs, ALB through to EC2 ASGs and RDS</li>
+      <li><strong>Blue-green deployments</strong> — zero-downtime swap using EC2 ASG + ALB weighted target groups, maintaining 99%+ availability</li>
+      <li><strong>End-to-end CI/CD</strong> — Jenkins + GitHub Actions: build → test → push ECR → deploy → smoke test → monitor — zero manual steps</li>
+      <li><strong>CloudWatch dashboards</strong> — proactive alerting across CPU, latency, error rate, and memory with auto-remediation hooks</li>
+      <li><strong>Docker + Kubernetes</strong> — containerized workloads with auto-scaling policies tied to CloudWatch alarms</li>
+    </ul>
+    <div class="modal-metrics">
+      <div class="modal-metric"><div class="modal-metric-val">99%+</div><div class="modal-metric-label">Availability</div></div>
+      <div class="modal-metric"><div class="modal-metric-val" style="color:var(--c3)">0</div><div class="modal-metric-label">Downtime Events</div></div>
+      <div class="modal-metric"><div class="modal-metric-val" style="color:#f6ad55">100%</div><div class="modal-metric-label">Automated</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal 2: Distributed Traffic Monitoring -->
+<div class="modal-overlay" id="modal-2" onclick="closeModal(event,'modal-2')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('modal-2').classList.remove('open')">✕</button>
+    <div class="modal-tag">Project 02 — Network Systems</div>
+    <h2 class="modal-title">Distributed Traffic Monitoring<br/>&amp; Network Optimization</h2>
+    <p class="modal-subtitle">Python · MySQL · AWS EC2 · Network Flow Algorithms</p>
+    <div class="modal-pills">
+      <span class="modal-pill">Python</span><span class="modal-pill">MySQL</span>
+      <span class="modal-pill">AWS EC2</span><span class="modal-pill">Dijkstra Algorithm</span>
+      <span class="modal-pill">Ford-Fulkerson</span><span class="modal-pill">pandas</span><span class="modal-pill">boto3</span>
+    </div>
+ 
+    <!-- Network topology SVG -->
+    <div class="modal-arch">
+      <svg viewBox="0 0 660 240" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <defs>
+          <marker id="mb1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="mb2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" stroke="#63b3ed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="mb3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" stroke="#f85149" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <!-- Source -->
+        <circle cx="70" cy="120" r="30" fill="rgba(99,179,237,0.08)" stroke="rgba(99,179,237,0.35)" stroke-width="0.8"/>
+        <text x="70" y="116" text-anchor="middle" class="nd-text">Source</text>
+        <text x="70" y="129" text-anchor="middle" class="nd-text-dim">Node A</text>
+        <!-- Routers -->
+        <rect x="156" y="38" width="90" height="32" rx="5" class="nd-node"/>
+        <text x="201" y="58" text-anchor="middle" class="nd-text">Router-1</text>
+        <rect x="156" y="104" width="90" height="32" rx="5" class="nd-node"/>
+        <text x="201" y="124" text-anchor="middle" class="nd-text">Router-2</text>
+        <rect x="156" y="170" width="90" height="32" rx="5" class="nd-node-warn"/>
+        <text x="201" y="186" text-anchor="middle" fill="#f85149" font-family="Cabinet Grotesk,sans-serif" font-size="11">Router-3</text>
+        <text x="201" y="198" text-anchor="middle" class="nd-text-red">bottleneck</text>
+        <!-- Switches -->
+        <rect x="326" y="72" width="90" height="32" rx="5" class="nd-node"/>
+        <text x="371" y="92" text-anchor="middle" class="nd-text">Switch-B</text>
+        <rect x="326" y="138" width="90" height="32" rx="5" class="nd-node"/>
+        <text x="371" y="158" text-anchor="middle" class="nd-text">Switch-C</text>
+        <!-- Destination -->
+        <circle cx="590" cy="120" r="30" fill="rgba(104,211,145,0.08)" stroke="rgba(104,211,145,0.35)" stroke-width="0.8"/>
+        <text x="590" y="116" text-anchor="middle" class="nd-text">Dest.</text>
+        <text x="590" y="129" text-anchor="middle" class="nd-text-dim">Node Z</text>
+        <!-- Source → Routers -->
+        <line x1="100" y1="106" x2="156" y2="60" stroke="#63b3ed" stroke-width="1.5" marker-end="url(#mb2)"/>
+        <line x1="100" y1="120" x2="156" y2="120" stroke="#63b3ed" stroke-width="1.5" marker-end="url(#mb2)"/>
+        <line x1="100" y1="134" x2="156" y2="176" stroke="#4a5568" stroke-width="1" marker-end="url(#mb1)"/>
+        <!-- Router-1 → Switch-B (optimal) -->
+        <line x1="246" y1="58" x2="326" y2="84" stroke="#63b3ed" stroke-width="2" marker-end="url(#mb2)"/>
+        <text x="282" y="64" text-anchor="middle" fill="#63b3ed" font-family="Cabinet Grotesk,sans-serif" font-size="8">optimal</text>
+        <!-- Router-2 → Switches -->
+        <line x1="246" y1="120" x2="326" y2="96" stroke="#68d391" stroke-width="1" marker-end="url(#mb2)"/>
+        <line x1="246" y1="120" x2="326" y2="148" stroke="#68d391" stroke-width="1" marker-end="url(#mb2)"/>
+        <!-- Router-3 → Switch-C (bottleneck) -->
+        <line x1="246" y1="182" x2="326" y2="162" stroke="#f85149" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#mb3)"/>
+        <!-- Switches → Dest -->
+        <line x1="416" y1="88" x2="560" y2="108" stroke="#63b3ed" stroke-width="2" marker-end="url(#mb2)"/>
+        <line x1="416" y1="154" x2="560" y2="132" stroke="#4a5568" stroke-width="1" marker-end="url(#mb1)"/>
+        <text x="490" y="96" text-anchor="middle" fill="#63b3ed" font-family="Cabinet Grotesk,sans-serif" font-size="8">shortest path</text>
+        <!-- Edge weights -->
+        <text x="118" y="98" class="nd-text-dim">w=2</text>
+        <text x="118" y="120" class="nd-text-dim">w=3</text>
+        <text x="118" y="158" class="nd-text-dim">w=8</text>
+      </svg>
+    </div>
+ 
+    <ul class="modal-bullets">
+      <li><strong>Dijkstra shortest-path</strong> — applied across EC2 node topology O(E log V) for optimal routing across all traffic flows</li>
+      <li><strong>Bottleneck detection</strong> — Python analysis scripts identify saturated links and high-latency paths using Ford-Fulkerson max-flow</li>
+      <li><strong>MySQL persistence</strong> — traffic metrics, path histories, and anomaly logs stored and queried for trend analysis</li>
+      <li><strong>Architecture recommendations</strong> — system outputs actionable scaling suggestions based on real-time flow analysis</li>
+      <li><strong>NetDevOps alignment</strong> — patterns directly applicable to enterprise network automation and SDN optimization</li>
+    </ul>
+    <div class="modal-metrics">
+      <div class="modal-metric"><div class="modal-metric-val" style="color:var(--c2);font-size:1.1rem">O(E·logV)</div><div class="modal-metric-label">Dijkstra Complexity</div></div>
+      <div class="modal-metric"><div class="modal-metric-val" style="color:var(--c3)">Multi</div><div class="modal-metric-label">Node Distributed</div></div>
+      <div class="modal-metric"><div class="modal-metric-val" style="color:#f6ad55">Real-time</div><div class="modal-metric-label">Flow Analysis</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal 3: Multi-Tier AWS Architecture -->
+<div class="modal-overlay" id="modal-3" onclick="closeModal(event,'modal-3')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('modal-3').classList.remove('open')">✕</button>
+    <div class="modal-tag">Project 03 — Cloud Architecture</div>
+    <h2 class="modal-title">Multi-Tier AWS<br/>Cloud Architecture</h2>
+    <p class="modal-subtitle">VPC · IAM · RDS · ALB · CloudWatch · CloudTrail</p>
+    <div class="modal-pills">
+      <span class="modal-pill">VPC</span><span class="modal-pill">IAM</span><span class="modal-pill">RDS</span>
+      <span class="modal-pill">ALB</span><span class="modal-pill">EC2</span><span class="modal-pill">S3</span>
+      <span class="modal-pill">CloudWatch</span><span class="modal-pill">CloudTrail</span><span class="modal-pill">Security Groups</span>
+    </div>
+    <div class="modal-arch">
+      <svg viewBox="0 0 660 280" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <defs>
+          <marker id="mc1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="mc2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" stroke="#63b3ed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <!-- VPC container -->
+        <rect x="20" y="20" width="620" height="248" rx="12" fill="rgba(99,179,237,0.02)" stroke="rgba(99,179,237,0.1)" stroke-width="0.8" stroke-dasharray="6 3"/>
+        <text x="36" y="40" fill="#4a5568" font-family="Cabinet Grotesk,sans-serif" font-size="10" letter-spacing="1">VPC — 10.0.0.0/16</text>
+        <!-- Public subnet -->
+        <rect x="36" y="50" width="280" height="80" rx="8" fill="rgba(104,211,145,0.04)" stroke="rgba(104,211,145,0.18)" stroke-width="0.6" stroke-dasharray="4 2"/>
+        <text x="52" y="66" fill="#68d391" font-family="Cabinet Grotesk,sans-serif" font-size="9" letter-spacing="1">PUBLIC SUBNET</text>
+        <!-- ALB in public -->
+        <rect x="60" y="74" width="110" height="44" rx="6" fill="rgba(99,179,237,0.08)" stroke="rgba(99,179,237,0.3)" stroke-width="0.8"/>
+        <text x="115" y="98" text-anchor="middle" fill="#63b3ed" font-family="Cabinet Grotesk,sans-serif" font-size="11">ALB</text>
+        <!-- IGW in public -->
+        <rect x="200" y="74" width="100" height="44" rx="6" class="nd-node"/>
+        <text x="250" y="98" text-anchor="middle" class="nd-text">IGW</text>
+        <!-- Private subnet -->
+        <rect x="36" y="148" width="280" height="108" rx="8" fill="rgba(183,148,244,0.03)" stroke="rgba(183,148,244,0.15)" stroke-width="0.6" stroke-dasharray="4 2"/>
+        <text x="52" y="164" fill="#b794f4" font-family="Cabinet Grotesk,sans-serif" font-size="9" letter-spacing="1">PRIVATE SUBNET</text>
+        <!-- EC2 cluster -->
+        <rect x="52" y="172" width="115" height="40" rx="6" class="nd-node"/>
+        <text x="109" y="186" text-anchor="middle" class="nd-text">EC2 Cluster</text>
+        <text x="109" y="200" text-anchor="middle" class="nd-text-dim">App Tier</text>
+        <!-- RDS -->
+        <rect x="188" y="172" width="115" height="40" rx="6" class="nd-node"/>
+        <text x="245" y="192" text-anchor="middle" class="nd-text">RDS MySQL</text>
+        <!-- IAM + SG -->
+        <rect x="52" y="224" width="115" height="24" rx="5" fill="rgba(183,148,244,0.06)" stroke="rgba(183,148,244,0.2)" stroke-width="0.6"/>
+        <text x="109" y="240" text-anchor="middle" fill="#b794f4" font-family="Cabinet Grotesk,sans-serif" font-size="9">IAM Roles + SG</text>
+        <!-- Monitoring stack -->
+        <rect x="340" y="50" width="280" height="200" rx="8" fill="rgba(99,179,237,0.02)" stroke="rgba(99,179,237,0.08)" stroke-width="0.6" stroke-dasharray="4 2"/>
+        <text x="356" y="66" fill="#4a5568" font-family="Cabinet Grotesk,sans-serif" font-size="9" letter-spacing="1">OBSERVABILITY STACK</text>
+        <rect x="356" y="74" width="120" height="36" rx="6" class="nd-node"/>
+        <text x="416" y="96" text-anchor="middle" class="nd-text">CloudWatch</text>
+        <rect x="490" y="74" width="120" height="36" rx="6" class="nd-node"/>
+        <text x="550" y="96" text-anchor="middle" class="nd-text">CloudTrail</text>
+        <rect x="356" y="126" width="120" height="36" rx="6" class="nd-node"/>
+        <text x="416" y="148" text-anchor="middle" class="nd-text">S3 Bucket</text>
+        <rect x="490" y="126" width="120" height="36" rx="6" class="nd-node"/>
+        <text x="550" y="148" text-anchor="middle" class="nd-text">SNS Alerts</text>
+        <rect x="420" y="178" width="120" height="36" rx="6" fill="rgba(248,81,73,0.06)" stroke="rgba(248,81,73,0.2)" stroke-width="0.6"/>
+        <text x="480" y="200" text-anchor="middle" fill="#f85149" font-family="Cabinet Grotesk,sans-serif" font-size="11">WAF</text>
+        <!-- Arrows -->
+        <line x1="170" y1="96" x2="200" y2="96" stroke="#4a5568" stroke-width="1" marker-end="url(#mc1)"/>
+        <line x1="115" y1="118" x2="115" y2="170" stroke="#4a5568" stroke-width="1" marker-end="url(#mc1)"/>
+        <line x1="245" y1="118" x2="245" y2="170" stroke="#4a5568" stroke-width="1" marker-end="url(#mc1)"/>
+        <line x1="316" y1="96" x2="356" y2="96" stroke="#63b3ed" stroke-width="1" stroke-dasharray="4 2" marker-end="url(#mc2)"/>
+      </svg>
+    </div>
+    <ul class="modal-bullets">
+      <li><strong>Layered VPC networking</strong> — public subnets for ALB/IGW, private subnets for EC2 and RDS with NAT gateway routing</li>
+      <li><strong>Fine-grained IAM</strong> — least-privilege role assignments with resource-level policies for all AWS services</li>
+      <li><strong>Full observability</strong> — CloudWatch metrics + dashboards + alarms, CloudTrail for API audit logging, SNS alerting</li>
+      <li><strong>WAF protection</strong> — AWS WAF rules on ALB for SQL injection, XSS, and rate limiting</li>
+      <li><strong>Auto-scaling</strong> — EC2 ASG policies tied to CloudWatch CPU/request alarms for automatic capacity management</li>
+    </ul>
+  </div>
+</div>
+ 
+<!-- Modal 4: Serverless on AWS -->
+<div class="modal-overlay" id="modal-4" onclick="closeModal(event,'modal-4')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('modal-4').classList.remove('open')">✕</button>
+    <div class="modal-tag">Project 04 — Serverless</div>
+    <h2 class="modal-title">Serverless Application<br/>on AWS</h2>
+    <p class="modal-subtitle">Lambda · API Gateway · DynamoDB · S3 · IAM · CloudWatch</p>
+    <div class="modal-pills">
+      <span class="modal-pill">Lambda</span><span class="modal-pill">API Gateway</span>
+      <span class="modal-pill">DynamoDB</span><span class="modal-pill">S3</span>
+      <span class="modal-pill">IAM</span><span class="modal-pill">CloudWatch</span><span class="modal-pill">CloudFormation</span>
+    </div>
+    <div class="modal-arch">
+      <svg viewBox="0 0 660 220" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <defs>
+          <marker id="md1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="md2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" stroke="#b794f4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <!-- Client -->
+        <circle cx="60" cy="110" r="32" fill="rgba(99,179,237,0.06)" stroke="rgba(99,179,237,0.3)" stroke-width="0.8"/>
+        <text x="60" y="107" text-anchor="middle" class="nd-text">Client</text>
+        <text x="60" y="120" text-anchor="middle" class="nd-text-dim">Browser</text>
+        <!-- API Gateway -->
+        <rect x="136" y="88" width="120" height="44" rx="8" fill="rgba(183,148,244,0.08)" stroke="rgba(183,148,244,0.3)" stroke-width="0.8"/>
+        <text x="196" y="107" text-anchor="middle" fill="#b794f4" font-family="Cabinet Grotesk,sans-serif" font-size="11" font-weight="600">API Gateway</text>
+        <text x="196" y="121" text-anchor="middle" fill="#4a5568" font-family="Cabinet Grotesk,sans-serif" font-size="9">REST / HTTP</text>
+        <!-- Lambda -->
+        <rect x="306" y="88" width="120" height="44" rx="8" fill="rgba(248,161,27,0.08)" stroke="rgba(248,161,27,0.3)" stroke-width="0.8"/>
+        <text x="366" y="107" text-anchor="middle" fill="#f6ad55" font-family="Cabinet Grotesk,sans-serif" font-size="11" font-weight="600">Lambda</text>
+        <text x="366" y="121" text-anchor="middle" fill="#4a5568" font-family="Cabinet Grotesk,sans-serif" font-size="9">Function Runtime</text>
+        <!-- DynamoDB -->
+        <rect x="476" y="54" width="120" height="44" rx="8" class="nd-node-active"/>
+        <text x="536" y="76" text-anchor="middle" fill="#68d391" font-family="Cabinet Grotesk,sans-serif" font-size="11">DynamoDB</text>
+        <text x="536" y="89" text-anchor="middle" fill="#4a5568" font-family="Cabinet Grotesk,sans-serif" font-size="9">NoSQL Store</text>
+        <!-- S3 -->
+        <rect x="476" y="124" width="120" height="44" rx="8" class="nd-node"/>
+        <text x="536" y="146" text-anchor="middle" class="nd-text">S3 Bucket</text>
+        <text x="536" y="159" text-anchor="middle" class="nd-text-dim">Static Assets</text>
+        <!-- CloudWatch -->
+        <rect x="250" y="172" width="120" height="36" rx="6" class="nd-node"/>
+        <text x="310" y="194" text-anchor="middle" class="nd-text">CloudWatch</text>
+        <!-- IAM shield -->
+        <rect x="130" y="172" width="100" height="36" rx="6" fill="rgba(248,81,73,0.06)" stroke="rgba(248,81,73,0.18)" stroke-width="0.6"/>
+        <text x="180" y="194" text-anchor="middle" fill="#f85149" font-family="Cabinet Grotesk,sans-serif" font-size="10">IAM Policies</text>
+        <!-- Arrows -->
+        <line x1="92" y1="110" x2="136" y2="110" stroke="#63b3ed" stroke-width="1.5" marker-end="url(#md2)"/>
+        <line x1="256" y1="110" x2="306" y2="110" stroke="#b794f4" stroke-width="1.5" marker-end="url(#md2)"/>
+        <line x1="426" y1="98" x2="476" y2="80" stroke="#4a5568" stroke-width="1" marker-end="url(#md1)"/>
+        <line x1="426" y1="122" x2="476" y2="140" stroke="#4a5568" stroke-width="1" marker-end="url(#md1)"/>
+        <line x1="366" y1="132" x2="310" y2="170" stroke="#4a5568" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#md1)"/>
+      </svg>
+    </div>
+    <ul class="modal-bullets">
+      <li><strong>Zero-server architecture</strong> — Lambda functions triggered via API Gateway for fully event-driven request handling</li>
+      <li><strong>DynamoDB backend</strong> — NoSQL persistence with on-demand capacity, global secondary indexes, and TTL for session data</li>
+      <li><strong>S3 static hosting</strong> — frontend assets served from S3 with CloudFront CDN distribution and OAC policies</li>
+      <li><strong>Fine-grained IAM</strong> — per-function execution roles with least-privilege resource policies, no overly broad permissions</li>
+      <li><strong>CloudWatch monitoring</strong> — Lambda invocation metrics, error rate alarms, and X-Ray distributed tracing enabled</li>
+    </ul>
+    <div class="modal-metrics">
+      <div class="modal-metric"><div class="modal-metric-val" style="color:#f6ad55">0</div><div class="modal-metric-label">Servers Managed</div></div>
+      <div class="modal-metric"><div class="modal-metric-val" style="color:var(--c3)">Auto</div><div class="modal-metric-label">Scale to Zero</div></div>
+      <div class="modal-metric"><div class="modal-metric-val" style="color:var(--c2)">Pay/use</div><div class="modal-metric-label">Billing Model</div></div>
+    </div>
+  </div>
+</div>
+ 
 <div class="page">
-
-<!-- ══════════════ HERO ══════════════ -->
+ 
+<!-- ══ HERO ══ -->
 <section id="hero">
   <div class="hero-grid"></div>
   <div class="hero-content">
     <div class="hero-left">
       <div class="hero-tag">
         <span class="dot"></span>
-        Available for work · Morrisville, NC
+        Available for work · United States
       </div>
       <h1 class="hero-h1">
         <span class="line"><span class="word">Cloud</span></span>
@@ -652,8 +803,8 @@ footer {
         <span class="line"><span class="word">Engineer</span></span>
       </h1>
       <p class="hero-desc">
-        I build resilient, automated cloud infrastructure on AWS — crafting 
-        CI/CD pipelines, container orchestration, and IaC solutions that 
+        I build resilient, automated cloud infrastructure on AWS — crafting
+        CI/CD pipelines, container orchestration, and IaC solutions that
         scale effortlessly and stay observable.
       </p>
       <div class="hero-actions">
@@ -661,17 +812,30 @@ footer {
         <a href="#contact" class="btn-hero btn-hero-ghost">Get In Touch</a>
       </div>
     </div>
-
+ 
     <div class="hero-card glass">
       <div class="hc-status"><span class="hc-status-dot"></span>Open to Opportunities</div>
       <div class="hc-name">Aravind Raju</div>
       <div class="hc-role">Cloud & DevOps Engineer</div>
-      <div class="hc-loc">📍 Morrisville, NC, USA</div>
+      <div class="hc-loc">📍 United States of America</div>
       <div class="hc-stats">
-        <div class="hcs"><div class="hcs-num">1+</div><div class="hcs-label">Years Pro Exp</div></div>
-        <div class="hcs"><div class="hcs-num">MS</div><div class="hcs-label">CIS Degree</div></div>
-        <div class="hcs"><div class="hcs-num">10+</div><div class="hcs-label">AWS Services</div></div>
-        <div class="hcs"><div class="hcs-num">4</div><div class="hcs-label">Live Projects</div></div>
+        <!-- Clickable stat cards linking to projects -->
+        <a class="hcs" href="#projects" onclick="setTimeout(()=>openModal('modal-1'),400)" title="See Zero-Downtime project">
+          <div class="hcs-num">0</div>
+          <div class="hcs-label">Downtime Deploys</div>
+        </a>
+        <a class="hcs" href="#projects" onclick="setTimeout(()=>openModal('modal-2'),400)" title="See Traffic Monitor project">
+          <div class="hcs-num">Multi</div>
+          <div class="hcs-label">Node Traffic Monitor</div>
+        </a>
+        <a class="hcs" href="#projects" onclick="setTimeout(()=>openModal('modal-3'),400)" title="See Multi-Tier Architecture">
+          <div class="hcs-num">AWS</div>
+          <div class="hcs-label">Multi-Tier Arch</div>
+        </a>
+        <a class="hcs" href="#projects" onclick="setTimeout(()=>openModal('modal-4'),400)" title="See Serverless project">
+          <div class="hcs-num">λ</div>
+          <div class="hcs-label">Serverless on AWS</div>
+        </a>
       </div>
       <div class="hc-skills">
         <span class="hcs-pill">AWS</span><span class="hcs-pill">Terraform</span>
@@ -681,20 +845,19 @@ footer {
       </div>
     </div>
   </div>
-
   <div class="hero-scroll">
     <div class="hero-scroll-line"></div>
     <span>Scroll</span>
   </div>
 </section>
-
-<!-- ══════════════ ABOUT ══════════════ -->
+ 
+<!-- ══ ABOUT ══ -->
 <section id="about" class="section">
   <div class="section-eyebrow reveal">Who I Am</div>
   <h2 class="section-title reveal">Building the <em>invisible backbone</em><br/>of modern software</h2>
   <div class="about-grid">
     <div class="about-text reveal">
-      <p>I'm a <strong>Cloud & DevOps Engineer</strong> based in Morrisville, NC with a passion for automating everything that can be automated. My work sits at the intersection of infrastructure, developer experience, and systems reliability.</p>
+      <p>I'm a <strong>Cloud & DevOps Engineer</strong> based in the United States with a passion for automating everything that can be automated. My work sits at the intersection of infrastructure, developer experience, and systems reliability.</p>
       <p>At <strong>DB Attic Studios</strong>, I managed production AWS infrastructure supporting a live game, built CI/CD pipelines that cut deployment time by 40%, and containerized services with Docker across all environments.</p>
       <p>I hold an <strong>M.S. in Computer Information Systems</strong> from Rivier University and am actively deepening expertise in advanced AWS architecture and Kubernetes orchestration.</p>
       <div class="about-highlights">
@@ -735,101 +898,28 @@ footer {
     </div>
   </div>
 </section>
-
-<!-- ══════════════ SKILLS ══════════════ -->
+ 
+<!-- ══ SKILLS ══ -->
 <section id="skills" class="section">
   <div class="section-eyebrow reveal">Technical Stack</div>
   <h2 class="section-title reveal">Tools I build <em>with</em></h2>
   <div class="skills-bento">
-    <div class="sk glass sk-c1 reveal">
-      <span class="sk-icon">☁️</span>
-      <h3>Cloud (AWS)</h3>
-      <div class="sk-tags">
-        <span class="sk-tag">EC2</span><span class="sk-tag">VPC</span><span class="sk-tag">S3</span>
-        <span class="sk-tag">RDS</span><span class="sk-tag">Lambda</span><span class="sk-tag">IAM</span>
-        <span class="sk-tag">Route 53</span><span class="sk-tag">ALB</span>
-        <span class="sk-tag">Auto Scaling</span><span class="sk-tag">CloudWatch</span>
-        <span class="sk-tag">CloudTrail</span>
-      </div>
-    </div>
-    <div class="sk glass sk-c2 reveal">
-      <span class="sk-icon">🏗️</span>
-      <h3>Infrastructure as Code</h3>
-      <div class="sk-tags">
-        <span class="sk-tag">Terraform</span>
-        <span class="sk-tag">CloudFormation</span>
-        <span class="sk-tag">Ansible</span>
-      </div>
-    </div>
-    <div class="sk glass sk-c3 reveal">
-      <span class="sk-icon">🐳</span>
-      <h3>Containers</h3>
-      <div class="sk-tags">
-        <span class="sk-tag">Docker</span>
-        <span class="sk-tag">Kubernetes</span>
-        <span class="sk-tag">EKS</span>
-        <span class="sk-tag">Helm</span>
-      </div>
-    </div>
-    <div class="sk glass sk-c4 reveal">
-      <span class="sk-icon">⚙️</span>
-      <h3>CI/CD & Automation</h3>
-      <div class="sk-tags">
-        <span class="sk-tag">Jenkins</span><span class="sk-tag">GitHub Actions</span>
-        <span class="sk-tag">CircleCI</span><span class="sk-tag">Git</span>
-        <span class="sk-tag">Bitbucket</span>
-      </div>
-    </div>
-    <div class="sk glass sk-c5 reveal">
-      <span class="sk-icon">📊</span>
-      <h3>Monitoring & Observability</h3>
-      <div class="sk-tags">
-        <span class="sk-tag">ELK Stack</span>
-        <span class="sk-tag">CloudWatch</span>
-        <span class="sk-tag">CloudTrail</span>
-        <span class="sk-tag">Dashboards</span>
-        <span class="sk-tag">Alerting</span>
-      </div>
-    </div>
-    <div class="sk glass sk-c6 reveal">
-      <span class="sk-icon">💻</span>
-      <h3>OS & Scripting</h3>
-      <div class="sk-tags">
-        <span class="sk-tag">Linux</span>
-        <span class="sk-tag">Ubuntu</span>
-        <span class="sk-tag">Bash</span>
-        <span class="sk-tag">Python</span>
-      </div>
-    </div>
-    <div class="sk glass sk-c7 reveal">
-      <span class="sk-icon">🌐</span>
-      <h3>Networking</h3>
-      <div class="sk-tags">
-        <span class="sk-tag">VPC</span>
-        <span class="sk-tag">Subnets</span>
-        <span class="sk-tag">DNS</span>
-        <span class="sk-tag">Security Groups</span>
-        <span class="sk-tag">Load Balancers</span>
-      </div>
-    </div>
-    <div class="sk glass sk-c8 reveal">
-      <span class="sk-icon">🤖</span>
-      <h3>AI Dev Tools</h3>
-      <div class="sk-tags">
-        <span class="sk-tag">GitHub Copilot</span>
-        <span class="sk-tag">CodeWhisperer</span>
-        <span class="sk-tag">ChatGPT</span>
-      </div>
-    </div>
+    <div class="sk glass sk-c1 reveal"><span class="sk-icon">☁️</span><h3>Cloud (AWS)</h3><div class="sk-tags"><span class="sk-tag">EC2</span><span class="sk-tag">VPC</span><span class="sk-tag">S3</span><span class="sk-tag">RDS</span><span class="sk-tag">Lambda</span><span class="sk-tag">IAM</span><span class="sk-tag">Route 53</span><span class="sk-tag">ALB</span><span class="sk-tag">Auto Scaling</span><span class="sk-tag">CloudWatch</span><span class="sk-tag">CloudTrail</span></div></div>
+    <div class="sk glass sk-c2 reveal"><span class="sk-icon">🏗️</span><h3>Infrastructure as Code</h3><div class="sk-tags"><span class="sk-tag">Terraform</span><span class="sk-tag">CloudFormation</span><span class="sk-tag">Ansible</span></div></div>
+    <div class="sk glass sk-c3 reveal"><span class="sk-icon">🐳</span><h3>Containers</h3><div class="sk-tags"><span class="sk-tag">Docker</span><span class="sk-tag">Kubernetes</span><span class="sk-tag">EKS</span><span class="sk-tag">Helm</span></div></div>
+    <div class="sk glass sk-c4 reveal"><span class="sk-icon">⚙️</span><h3>CI/CD & Automation</h3><div class="sk-tags"><span class="sk-tag">Jenkins</span><span class="sk-tag">GitHub Actions</span><span class="sk-tag">CircleCI</span><span class="sk-tag">Git</span><span class="sk-tag">Bitbucket</span></div></div>
+    <div class="sk glass sk-c5 reveal"><span class="sk-icon">📊</span><h3>Monitoring & Observability</h3><div class="sk-tags"><span class="sk-tag">ELK Stack</span><span class="sk-tag">CloudWatch</span><span class="sk-tag">CloudTrail</span><span class="sk-tag">Dashboards</span><span class="sk-tag">Alerting</span></div></div>
+    <div class="sk glass sk-c6 reveal"><span class="sk-icon">💻</span><h3>OS & Scripting</h3><div class="sk-tags"><span class="sk-tag">Linux</span><span class="sk-tag">Ubuntu</span><span class="sk-tag">Bash</span><span class="sk-tag">Python</span></div></div>
+    <div class="sk glass sk-c7 reveal"><span class="sk-icon">🌐</span><h3>Networking</h3><div class="sk-tags"><span class="sk-tag">VPC</span><span class="sk-tag">Subnets</span><span class="sk-tag">DNS</span><span class="sk-tag">Security Groups</span><span class="sk-tag">Load Balancers</span></div></div>
+    <div class="sk glass sk-c8 reveal"><span class="sk-icon">🤖</span><h3>AI Dev Tools</h3><div class="sk-tags"><span class="sk-tag">GitHub Copilot</span><span class="sk-tag">CodeWhisperer</span><span class="sk-tag">ChatGPT</span></div></div>
   </div>
 </section>
-
-<!-- ══════════════ EXPERIENCE ══════════════ -->
+ 
+<!-- ══ EXPERIENCE ══ -->
 <section id="experience" class="section">
   <div class="section-eyebrow reveal">Career</div>
   <h2 class="section-title reveal">Where I've <em>worked</em></h2>
   <div class="exp-list">
-
     <div class="exp-card glass reveal">
       <div class="exp-top">
         <div class="exp-co">DB Attic Studios</div>
@@ -846,7 +936,6 @@ footer {
         <li>Collaborated with dev & ops teams to streamline releases and significantly reduce deployment risk.</li>
       </ul>
     </div>
-
     <div class="exp-card glass reveal">
       <div class="exp-top">
         <div class="exp-co">Good Mind (NGO)</div>
@@ -861,17 +950,16 @@ footer {
         <li>Created technical documentation enabling non-technical staff to manage systems independently.</li>
       </ul>
     </div>
-
   </div>
 </section>
-
-<!-- ══════════════ PROJECTS ══════════════ -->
+ 
+<!-- ══ PROJECTS ══ -->
 <section id="projects" class="section">
   <div class="section-eyebrow reveal">Portfolio</div>
   <h2 class="section-title reveal">Things I've <em>built</em></h2>
   <div class="projects-grid">
-
-    <div class="proj-card glass reveal">
+ 
+    <div class="proj-card glass reveal" onclick="openModal('modal-1')" role="button" tabindex="0">
       <div class="proj-arrow">↗</div>
       <div class="proj-num">01</div>
       <h3>Zero-Downtime AWS Deployment Pipeline</h3>
@@ -882,19 +970,20 @@ footer {
         <span class="proj-pill">Docker</span><span class="proj-pill">CloudWatch</span>
       </div>
     </div>
-
-    <div class="proj-card glass reveal">
+ 
+    <div class="proj-card glass reveal" onclick="openModal('modal-2')" role="button" tabindex="0">
       <div class="proj-arrow">↗</div>
       <div class="proj-num">02</div>
       <h3>Distributed Traffic Monitoring System</h3>
-      <p>Smart urban traffic management system analyzing and optimizing vehicle flow across multiple intersections with emergency vehicle prioritization and density simulation.</p>
+      <p>Network-aware traffic management system analyzing and optimizing data flow across distributed nodes using Dijkstra shortest-path and Ford-Fulkerson max-flow algorithms.</p>
       <div class="proj-tech">
         <span class="proj-pill">Python</span><span class="proj-pill">MySQL</span>
-        <span class="proj-pill">AWS EC2</span><span class="proj-pill">Traffic Algorithms</span>
+        <span class="proj-pill">AWS EC2</span><span class="proj-pill">Dijkstra</span>
+        <span class="proj-pill">Flow Algorithms</span>
       </div>
     </div>
-
-    <div class="proj-card glass reveal">
+ 
+    <div class="proj-card glass reveal" onclick="openModal('modal-3')" role="button" tabindex="0">
       <div class="proj-arrow">↗</div>
       <div class="proj-num">03</div>
       <h3>Multi-Tier AWS Cloud Architecture</h3>
@@ -905,8 +994,8 @@ footer {
         <span class="proj-pill">CloudWatch</span><span class="proj-pill">CloudTrail</span>
       </div>
     </div>
-
-    <div class="proj-card glass reveal">
+ 
+    <div class="proj-card glass reveal" onclick="openModal('modal-4')" role="button" tabindex="0">
       <div class="proj-arrow">↗</div>
       <div class="proj-num">04</div>
       <h3>Serverless Application on AWS</h3>
@@ -916,37 +1005,62 @@ footer {
         <span class="proj-pill">DynamoDB</span><span class="proj-pill">S3</span><span class="proj-pill">IAM</span>
       </div>
     </div>
-
+ 
   </div>
 </section>
-
-<!-- ══════════════ CERTIFICATIONS ══════════════ -->
+ 
+<!-- ══ CERTIFICATIONS ══ -->
 <section id="certifications" class="section">
   <div class="section-eyebrow reveal">Credentials</div>
   <h2 class="section-title reveal">Certifications &amp; <em>learning</em></h2>
   <div class="certs-grid">
+ 
+    <div class="cert-card glass reveal">
+      <div class="cert-icon-wrap">🛡️</div>
+      <h3>Cyber Threat Management</h3>
+      <div class="cert-issuer">Cisco Networking Academy</div>
+      <span class="cert-status cert-active">Completed</span>
+    </div>
+ 
+    <div class="cert-card glass reveal">
+      <div class="cert-icon-wrap">🔐</div>
+      <h3>Introduction to Cybersecurity</h3>
+      <div class="cert-issuer">Cisco Networking Academy</div>
+      <span class="cert-status cert-active">Completed</span>
+    </div>
+ 
+    <div class="cert-card glass reveal">
+      <div class="cert-icon-wrap">🌐</div>
+      <h3>Networking Basics</h3>
+      <div class="cert-issuer">Cisco Networking Academy</div>
+      <span class="cert-status cert-active">Completed</span>
+    </div>
+ 
     <div class="cert-card glass reveal">
       <div class="cert-icon-wrap">🔒</div>
+      <h3>Network Defense</h3>
+      <div class="cert-issuer">Cisco Networking Academy</div>
+      <span class="cert-status cert-active">Completed</span>
+    </div>
+ 
+    <div class="cert-card glass reveal">
+      <div class="cert-icon-wrap">🔩</div>
       <h3>Networking Devices &amp; Initial Configuration</h3>
       <div class="cert-issuer">Cisco Systems</div>
       <span class="cert-status cert-active">Issued Feb 2024</span>
     </div>
-    <div class="cert-card glass reveal">
-      <div class="cert-icon-wrap">🛡️</div>
-      <h3>Endpoint Security</h3>
-      <div class="cert-issuer">Cisco Systems</div>
-      <span class="cert-status cert-active">Issued Feb 2024</span>
-    </div>
+ 
     <div class="cert-card glass reveal">
       <div class="cert-icon-wrap">☁️</div>
-      <h3>AWS Certified Cloud Practitioner</h3>
+      <h3>AWS Certified Solutions Architect</h3>
       <div class="cert-issuer">Amazon Web Services</div>
       <span class="cert-status cert-progress">In Progress · 2026</span>
     </div>
+ 
   </div>
 </section>
-
-<!-- ══════════════ CONTACT ══════════════ -->
+ 
+<!-- ══ CONTACT ══ -->
 <section id="contact" class="section">
   <div class="contact-wrap glass reveal">
     <div class="section-eyebrow" style="justify-content:center;">Contact</div>
@@ -961,201 +1075,128 @@ footer {
     <a href="mailto:aravind.r1952@gmail.com" class="contact-email-big">aravind.r1952@gmail.com</a>
   </div>
 </section>
-
-<!-- FOOTER -->
+ 
 <footer>
   <div class="foot-left">AR<span>/</span></div>
-  <div class="foot-right">© 2026 Aravind Raju · Cloud & DevOps Engineer · Morrisville, NC</div>
+  <div class="foot-right">© 2026 Aravind Raju · Cloud & DevOps Engineer · United States of America</div>
   <a href="#hero" class="foot-scroll-top">↑</a>
 </footer>
-
-</div><!-- /page -->
-
+ 
+</div>
+ 
 <script>
-/* ═══════════════════════════════════════════════════
-   1. THREE.JS — INTERACTIVE PARTICLE FIELD
-═══════════════════════════════════════════════════ */
+/* ── THREE.JS PARTICLE FIELD ── */
 (function() {
   const canvas = document.getElementById('webgl');
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.setClearColor(0x000000, 0);
-
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(70, 1, 0.1, 100);
   camera.position.z = 3;
-
-  // Geometry — dense star field
   const count = 1800;
   const geo = new THREE.BufferGeometry();
   const pos = new Float32Array(count * 3);
   const sizes = new Float32Array(count);
   const colors = new Float32Array(count * 3);
-
-  const palette = [
-    [0.39, 0.70, 0.93], // sky blue
-    [0.47, 0.89, 0.97], // cyan
-    [0.42, 0.83, 0.57], // green
-    [0.72, 0.58, 0.96], // violet
-  ];
-
+  const palette = [[0.39,0.70,0.93],[0.47,0.89,0.97],[0.42,0.83,0.57],[0.72,0.58,0.96]];
   for (let i = 0; i < count; i++) {
-    pos[i*3]   = (Math.random() - 0.5) * 12;
-    pos[i*3+1] = (Math.random() - 0.5) * 8;
-    pos[i*3+2] = (Math.random() - 0.5) * 6;
-    sizes[i] = Math.random() * 3 + 0.5;
-    const c = palette[Math.floor(Math.random() * palette.length)];
-    colors[i*3] = c[0]; colors[i*3+1] = c[1]; colors[i*3+2] = c[2];
+    pos[i*3]=(Math.random()-0.5)*12; pos[i*3+1]=(Math.random()-0.5)*8; pos[i*3+2]=(Math.random()-0.5)*6;
+    sizes[i]=Math.random()*3+0.5;
+    const c=palette[Math.floor(Math.random()*palette.length)];
+    colors[i*3]=c[0]; colors[i*3+1]=c[1]; colors[i*3+2]=c[2];
   }
-
-  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  geo.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
-  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));
+  geo.setAttribute('color',new THREE.BufferAttribute(colors,3));
   const mat = new THREE.ShaderMaterial({
-    transparent: true, depthWrite: false, vertexColors: true,
-    blending: THREE.AdditiveBlending,
-    uniforms: {
-      uTime: { value: 0 },
-      uMouse: { value: new THREE.Vector2(0, 0) },
-      uPixelRatio: { value: renderer.getPixelRatio() }
-    },
-    vertexShader: `
-      attribute float aSize;
-      uniform float uTime;
-      uniform vec2 uMouse;
-      uniform float uPixelRatio;
-      varying vec3 vColor;
-      varying float vDist;
-
+    transparent:true, depthWrite:false, vertexColors:true, blending:THREE.AdditiveBlending,
+    uniforms:{ uTime:{value:0}, uMouse:{value:new THREE.Vector2(0,0)}, uPixelRatio:{value:renderer.getPixelRatio()} },
+    vertexShader:`
+      attribute float aSize; uniform float uTime; uniform vec2 uMouse; uniform float uPixelRatio;
+      varying vec3 vColor; varying float vDist;
       void main() {
-        vColor = color;
-        vec3 p = position;
-
-        // Gentle float
-        p.y += sin(uTime * 0.3 + p.x * 0.8) * 0.06;
-        p.x += cos(uTime * 0.2 + p.y * 0.6) * 0.04;
-
-        // Mouse repulsion
-        vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
-        vec2 proj = mvPosition.xy / -mvPosition.z;
-        float dist = length(proj - uMouse);
-        vDist = dist;
-        float repulse = smoothstep(0.8, 0.0, dist) * 0.5;
-        mvPosition.xy += normalize(proj - uMouse) * repulse;
-
-        gl_Position = projectionMatrix * mvPosition;
-        gl_PointSize = aSize * uPixelRatio * (1.0 + repulse * 2.0);
-      }
-    `,
-    fragmentShader: `
-      varying vec3 vColor;
-      varying float vDist;
+        vColor=color; vec3 p=position;
+        p.y+=sin(uTime*0.3+p.x*0.8)*0.06; p.x+=cos(uTime*0.2+p.y*0.6)*0.04;
+        vec4 mvPosition=modelViewMatrix*vec4(p,1.0);
+        vec2 proj=mvPosition.xy/-mvPosition.z; float dist=length(proj-uMouse); vDist=dist;
+        float repulse=smoothstep(0.8,0.0,dist)*0.5;
+        mvPosition.xy+=normalize(proj-uMouse)*repulse;
+        gl_Position=projectionMatrix*mvPosition;
+        gl_PointSize=aSize*uPixelRatio*(1.0+repulse*2.0);
+      }`,
+    fragmentShader:`
+      varying vec3 vColor; varying float vDist;
       void main() {
-        vec2 uv = gl_PointCoord - 0.5;
-        float d = length(uv);
-        if (d > 0.5) discard;
-        float alpha = (1.0 - d * 2.0) * 0.65;
-        gl_FragColor = vec4(vColor, alpha);
-      }
-    `
+        vec2 uv=gl_PointCoord-0.5; float d=length(uv);
+        if(d>0.5) discard;
+        float alpha=(1.0-d*2.0)*0.65;
+        gl_FragColor=vec4(vColor,alpha);
+      }`
   });
-
   const points = new THREE.Points(geo, mat);
   scene.add(points);
-
-  // Mouse
-  let mouseX = 0, mouseY = 0;
-  window.addEventListener('mousemove', e => {
-    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-  });
-
-  // Resize
-  function resize() {
-    const W = window.innerWidth, H = window.innerHeight;
-    camera.aspect = W / H;
-    camera.updateProjectionMatrix();
-    renderer.setSize(W, H);
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  // Animate
-  let t = 0;
-  function tick() {
-    t += 0.016;
-    mat.uniforms.uTime.value = t;
-    mat.uniforms.uMouse.value.set(mouseX * 1.5, mouseY);
-    points.rotation.y = t * 0.02;
-    points.rotation.x = mouseY * 0.04;
-    renderer.render(scene, camera);
-    requestAnimationFrame(tick);
-  }
+  let mouseX=0, mouseY=0;
+  window.addEventListener('mousemove', e => { mouseX=(e.clientX/window.innerWidth)*2-1; mouseY=-(e.clientY/window.innerHeight)*2+1; });
+  function resize() { const W=window.innerWidth,H=window.innerHeight; camera.aspect=W/H; camera.updateProjectionMatrix(); renderer.setSize(W,H); }
+  resize(); window.addEventListener('resize', resize);
+  let t=0;
+  function tick() { t+=0.016; mat.uniforms.uTime.value=t; mat.uniforms.uMouse.value.set(mouseX*1.5,mouseY); points.rotation.y=t*0.02; points.rotation.x=mouseY*0.04; renderer.render(scene,camera); requestAnimationFrame(tick); }
   tick();
 })();
-
-/* ═══════════════════════════════════════════════════
-   2. CUSTOM LIQUID CURSOR
-═══════════════════════════════════════════════════ */
+ 
+/* ── CURSOR ── */
 (function() {
-  const dot = document.getElementById('cur-dot');
-  const ring = document.getElementById('cur-ring');
-  const glow = document.getElementById('cur-glow');
-  let mx=0,my=0, rx=0,ry=0;
-
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    dot.style.left = mx+'px'; dot.style.top = my+'px';
-    glow.style.left = mx+'px'; glow.style.top = my+'px';
-  });
-
-  function lerp(a,b,t){ return a + (b-a)*t; }
-  function animate(){
-    rx = lerp(rx, mx, 0.1);
-    ry = lerp(ry, my, 0.1);
-    ring.style.left = rx+'px'; ring.style.top = ry+'px';
-    requestAnimationFrame(animate);
-  }
+  const dot=document.getElementById('cur-dot'), ring=document.getElementById('cur-ring'), glow=document.getElementById('cur-glow');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; glow.style.left=mx+'px'; glow.style.top=my+'px'; });
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function animate(){ rx=lerp(rx,mx,0.1); ry=lerp(ry,my,0.1); ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animate); }
   animate();
-
-  document.querySelectorAll('a, button, .glass, .sk-tag, .hcs').forEach(el => {
+  document.querySelectorAll('a, button, .glass, .sk-tag, .hcs, .proj-card').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
   });
 })();
-
-/* ═══════════════════════════════════════════════════
-   3. GSAP ANIMATIONS
-═══════════════════════════════════════════════════ */
+ 
+/* ── MODAL ── */
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(e, id) {
+  if (e.target === e.currentTarget) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => { m.classList.remove('open'); document.body.style.overflow = ''; });
+  }
+});
+// Keyboard access for project cards
+document.querySelectorAll('.proj-card[tabindex]').forEach(card => {
+  card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') card.click(); });
+});
+ 
+/* ── GSAP ── */
 gsap.registerPlugin(ScrollTrigger);
-
-// NAV appear
 gsap.to('#navbar', { y: 0, duration: 1, delay: 1.2, ease: 'power3.out' });
 document.getElementById('navbar').classList.add('visible');
-
-// Hero words stagger
-gsap.to('.hero-h1 .word', {
-  y: 0, duration: 1.1, stagger: 0.12, ease: 'power4.out', delay: 0.3
-});
-
-// Hero tag
-gsap.to('.hero-tag', { opacity: 1, y: 0, duration: 0.8, delay: 0.5, ease: 'power3.out' });
-gsap.to('.hero-desc', { opacity: 1, y: 0, duration: 0.8, delay: 0.9, ease: 'power3.out' });
-gsap.to('.hero-actions', { opacity: 1, y: 0, duration: 0.8, delay: 1.1, ease: 'power3.out' });
-gsap.to('.hero-card', { opacity: 1, x: 0, duration: 1, delay: 0.7, ease: 'power3.out' });
-
-// Scroll reveals
+gsap.to('.hero-h1 .word', { y: 0, duration: 1.1, stagger: 0.12, ease: 'power4.out', delay: 0.3 });
+gsap.to('.hero-tag',     { opacity: 1, y: 0, duration: 0.8, delay: 0.5,  ease: 'power3.out' });
+gsap.to('.hero-desc',    { opacity: 1, y: 0, duration: 0.8, delay: 0.9,  ease: 'power3.out' });
+gsap.to('.hero-actions', { opacity: 1, y: 0, duration: 0.8, delay: 1.1,  ease: 'power3.out' });
+gsap.to('.hero-card',    { opacity: 1, x: 0, duration: 1,   delay: 0.7,  ease: 'power3.out' });
+ 
 document.querySelectorAll('.reveal').forEach((el, i) => {
   gsap.to(el, {
     scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
-    opacity: 1, y: 0, duration: 0.85,
-    delay: (i % 4) * 0.07,
-    ease: 'power3.out'
+    opacity: 1, y: 0, duration: 0.85, delay: (i % 4) * 0.07, ease: 'power3.out'
   });
 });
-
-// Skills bento hover tilt
+ 
 document.querySelectorAll('.sk').forEach(card => {
   card.addEventListener('mousemove', e => {
     const r = card.getBoundingClientRect();
@@ -1165,12 +1206,9 @@ document.querySelectorAll('.sk').forEach(card => {
     card.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100)+'%');
     card.style.setProperty('--my', ((e.clientY-r.top)/r.height*100)+'%');
   });
-  card.addEventListener('mouseleave', () => {
-    gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, duration: 0.6, ease: 'power3.out' });
-  });
+  card.addEventListener('mouseleave', () => { gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, duration: 0.6, ease: 'power3.out' }); });
 });
-
-// Glass card mouse glow
+ 
 document.querySelectorAll('.glass').forEach(card => {
   card.addEventListener('mousemove', e => {
     const r = card.getBoundingClientRect();
@@ -1178,30 +1216,24 @@ document.querySelectorAll('.glass').forEach(card => {
     card.style.setProperty('--my', ((e.clientY-r.top)/r.height*100)+'%');
   });
 });
-
-// Project cards hover
+ 
 document.querySelectorAll('.proj-card').forEach(card => {
   card.addEventListener('mouseenter', () => gsap.to(card, { y: -6, duration: 0.4, ease: 'power2.out' }));
-  card.addEventListener('mouseleave', () => gsap.to(card, { y: 0, duration: 0.5, ease: 'power3.out' }));
+  card.addEventListener('mouseleave', () => gsap.to(card, { y: 0,  duration: 0.5, ease: 'power3.out' }));
 });
-
-// Nav active highlight on scroll
+ 
 const sections = document.querySelectorAll('section[id]');
 const navLinks = document.querySelectorAll('.nav-menu a');
 window.addEventListener('scroll', () => {
   let current = '';
   sections.forEach(s => { if (window.scrollY >= s.offsetTop - 150) current = s.id; });
-  navLinks.forEach(a => {
-    const isActive = a.getAttribute('href') === '#' + current;
-    a.style.color = isActive ? 'var(--c1)' : '';
-  });
+  navLinks.forEach(a => { a.style.color = a.getAttribute('href') === '#' + current ? 'var(--c1)' : ''; });
 });
-
-// Parallax on hero grid
+ 
 window.addEventListener('scroll', () => {
-  const y = window.scrollY;
-  document.querySelector('.hero-grid').style.transform = `translateY(${y * 0.2}px)`;
+  document.querySelector('.hero-grid').style.transform = `translateY(${window.scrollY * 0.2}px)`;
 });
 </script>
 </body>
 </html>
+ 
